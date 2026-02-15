@@ -212,6 +212,13 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.tower-btn.disabled {
+  opacity: 0.3;
+  filter: grayscale(1);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .tower-btn.active {
   opacity: 1;
   background: rgba(0, 242, 255, 0.2);
@@ -242,6 +249,10 @@ body {
 
 #btn-jammer .tower-icon {
   color: #ffd700;
+}
+
+#btn-ram .tower-icon {
+  color: #00d2ff;
 }
 
 .tower-name {

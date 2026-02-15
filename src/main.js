@@ -181,10 +181,18 @@ class Game {
       }
     }
 
-    const costs = { basic: 100, fast: 250, heavy: 500, firewall: 10, jammer: 400 };
+    const costs = { basic: 100, fast: 250, heavy: 500, firewall: 10, jammer: 150, ram_generator: 300 };
     const cost = costs[this.selectedTowerType];
 
     if (this.credits < cost) return;
+
+    if (this.selectedTowerType === 'ram_generator') {
+      const ramCount = this.towers.filter(t => t.type === 'ram_generator').length;
+      if (ramCount >= 10) {
+        this.showMessage("RAM LIMIT REACHED (MAX 10)");
+        return;
+      }
+    }
 
     // Temporarily place tower
     this.grid[y][x] = 1;
@@ -230,7 +238,17 @@ class Game {
   selectTower(tower) {
     this.selectedTower = tower;
     document.getElementById('sel-tower-name').textContent = tower.name.toUpperCase();
-    document.getElementById('sel-tower-stats').textContent = `Range: ${tower.range} | Damage: ${tower.damage}`;
+
+    let stats = `Range: ${tower.range} | Damage: ${tower.damage}`;
+    if (tower.type === 'ram_generator') {
+      stats = `Yield: ${tower.damage}MB/s`;
+    } else if (tower.type === 'firewall') {
+      stats = 'Passive Barrier';
+    } else if (tower.type === 'jammer') {
+      stats = `Range: ${tower.range} | Slow: 70%`;
+    }
+
+    document.getElementById('sel-tower-stats').textContent = stats;
     document.getElementById('sel-refund').textContent = `${Math.floor(tower.cost / 2)}MB`;
     document.getElementById('selection-overlay').classList.remove('hidden');
   }
@@ -295,6 +313,23 @@ class Game {
     document.getElementById('credits').textContent = this.credits;
     document.getElementById('wave').textContent = this.wave;
     document.getElementById('lives').textContent = this.lives;
+
+    // Update RAM Generator button state
+    const ramBtn = document.getElementById('btn-ram');
+    if (ramBtn) {
+      const ramCount = this.towers.filter(t => t.type === 'ram_generator').length;
+      if (ramCount >= 10) {
+        ramBtn.classList.add('disabled');
+        // If it was selected, deselect it
+        if (this.selectedTowerType === 'ram_generator') {
+          this.selectedTowerType = 'basic';
+          ramBtn.classList.remove('active');
+          document.getElementById('btn-basic').classList.add('active');
+        }
+      } else {
+        ramBtn.classList.remove('disabled');
+      }
+    }
   }
 
   showMessage(text, duration = 2000) {
@@ -404,7 +439,11 @@ class Game {
   update() {
     // Update Towers
     this.towers.forEach(t => {
-      t.update(this.enemies, this.projectiles);
+      const generated = t.update(this.enemies, this.projectiles);
+      if (generated > 0) {
+        this.credits += generated;
+        this.updateUI();
+      }
     });
 
     // Update Enemies
@@ -484,7 +523,7 @@ class Game {
       this.ctx.fillRect(this.mouse.x * TILE_SIZE, this.mouse.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
       // Draw range of selected tower
-      const configs = { basic: 120, fast: 150, heavy: 200, firewall: 0, jammer: 120 };
+      const configs = { basic: 120, fast: 150, heavy: 200, firewall: 0, jammer: 120, ram_generator: 0 };
       const range = configs[this.selectedTowerType];
       this.ctx.beginPath();
       this.ctx.arc(this.mouse.x * TILE_SIZE + TILE_SIZE / 2, this.mouse.y * TILE_SIZE + TILE_SIZE / 2, range, 0, Math.PI * 2);

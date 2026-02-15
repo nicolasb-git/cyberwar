@@ -50,14 +50,23 @@ export class Tower {
             fast: { range: 150, damage: 4, cooldown: 10, cost: 250, color: '#bf00ff', bulletSpeed: 16 },
             heavy: { range: 200, damage: 70, cooldown: 80, cost: 500, color: '#ff0000', bulletSpeed: 8 },
             firewall: { range: 0, damage: 0, cooldown: 1, cost: 10, color: '#4a4e69', bulletSpeed: 0 },
-            jammer: { range: 120, damage: 0, cooldown: 1, cost: 400, color: '#ffd700', bulletSpeed: 0 }
+            jammer: { range: 120, damage: 0, cooldown: 1, cost: 150, color: '#ffd700', bulletSpeed: 0 },
+            ram_generator: { range: 0, damage: 5, cooldown: 60, cost: 300, color: '#00d2ff', bulletSpeed: 0 }
         };
 
         const config = configs[type];
         this.range = config.range;
         this.damage = config.damage;
         this.cost = config.cost;
-        this.name = type === 'basic' ? 'Packet Filter' : type === 'fast' ? 'Scan Decryptor' : type === 'heavy' ? 'Logic Bomb' : type === 'firewall' ? 'Firewall' : 'Jammer';
+        const names = {
+            basic: 'Packet Filter',
+            fast: 'Scan Decryptor',
+            heavy: 'Logic Bomb',
+            firewall: 'Firewall',
+            jammer: 'Jammer',
+            ram_generator: 'RAM Generator'
+        };
+        this.name = names[type];
         this.cooldownMax = config.cooldown;
         this.cooldown = 0;
         this.color = config.color;
@@ -65,7 +74,7 @@ export class Tower {
     }
 
     update(enemies, projectiles) {
-        if (this.type === 'firewall') return;
+        if (this.type === 'firewall') return 0;
 
         if (this.type === 'jammer') {
             for (const enemy of enemies) {
@@ -73,12 +82,17 @@ export class Tower {
                     enemy.slowed = true;
                 }
             }
-            return;
+            return 0;
         }
 
         if (this.cooldown > 0) this.cooldown--;
 
         if (this.cooldown === 0) {
+            if (this.type === 'ram_generator') {
+                this.cooldown = this.cooldownMax;
+                return this.damage; // Using damage field to store RAM amount for simplicity
+            }
+
             let nearest = null;
             let minDist = Infinity;
 
@@ -101,6 +115,7 @@ export class Tower {
                 this.cooldown = this.cooldownMax;
             }
         }
+        return 0;
     }
 
     draw(ctx) {
@@ -143,12 +158,26 @@ export class Tower {
             ctx.stroke();
             ctx.beginPath(); // Reset for the main fill
             ctx.arc(this.pos.x, this.pos.y, 15, 0, Math.PI * 2);
+        } else if (this.type === 'ram_generator') {
+            // RAM Barret: Long horizontal PCB
+            ctx.rect(this.pos.x - 18, this.pos.y - 8, 36, 16);
         }
 
         ctx.fillStyle = this.color;
         ctx.shadowBlur = 15;
         ctx.shadowColor = this.color;
         ctx.fill();
+
+        if (this.type === 'ram_generator') {
+            // Add chips and pins on top of the filled PCB
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#1a1a1a';
+            for (let i = 0; i < 4; i++) {
+                ctx.fillRect(this.pos.x - 15 + (i * 8), this.pos.y - 5, 6, 10);
+            }
+            ctx.fillStyle = '#ffdf00'; // Gold pins
+            ctx.fillRect(this.pos.x - 18, this.pos.y + 6, 36, 2);
+        }
 
         // Inner core
         ctx.beginPath();

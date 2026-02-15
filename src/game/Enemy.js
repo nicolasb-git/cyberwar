@@ -18,17 +18,17 @@ export class Enemy {
             speedMult = 0.6;
             this.color = '#faff00'; // Toxic Yellow
             this.radius = 20;
-            this.reward = (10 + level) * 5;
+            this.reward = (10 + level) * 15;
         } else if (this.isResistant) {
             hpMult = 1.5;
             speedMult = 0.8;
             this.color = '#00f2ff'; // Data Cyan
             this.radius = 15;
-            this.reward = (10 + level) * 2;
+            this.reward = (10 + level) * 6;
         } else {
             this.color = '#ff0000'; // Virus Red
             this.radius = 12;
-            this.reward = 10 + level;
+            this.reward = (10 + level) * 3;
         }
 
         this.speed = (1 + (level * 0.2)) * speedMult;
@@ -44,7 +44,7 @@ export class Enemy {
         if (this.dead || this.reachedEnd) return;
 
         const dir = this.target.sub(this.pos).normalize();
-        const currentSpeed = this.slowed ? this.speed * 0.5 : this.speed;
+        const currentSpeed = this.slowed ? this.speed * 0.3 : this.speed;
         this.pos = this.pos.add(dir.mult(currentSpeed));
 
         if (this.pos.dist(this.target) < this.speed) {
