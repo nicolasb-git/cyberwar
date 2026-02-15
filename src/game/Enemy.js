@@ -1,32 +1,51 @@
 import { Vector } from './Utils';
 
 export class Enemy {
-    constructor(path, level = 1, isBoss = false) {
-        this.path = path; // Array of {x, y} in grid coords
+    constructor(path, level = 1, type = 'standard') {
+        this.path = path;
         this.gridPosIndex = 0;
-        this.isBoss = isBoss;
+        this.type = type;
+        this.isBoss = type === 'boss';
+        this.isResistant = type === 'resistant';
 
-        // Convert first path point to world coords (assuming 40px tiles)
         this.pos = new Vector(path[0].x * 40 + 20, path[0].y * 40 + 20);
         this.target = new Vector(path[1].x * 40 + 20, path[1].y * 40 + 20);
 
-        this.speed = (1 + (level * 0.2)) * (isBoss ? 0.6 : 1);
-        this.maxHealth = 40 * Math.pow(1.2, level - 1) * (isBoss ? 5 : 1);
+        let hpMult = 1;
+        let speedMult = 1;
+        if (this.isBoss) {
+            hpMult = 5;
+            speedMult = 0.6;
+            this.color = '#faff00'; // Toxic Yellow
+            this.radius = 20;
+            this.reward = (10 + level) * 5;
+        } else if (this.isResistant) {
+            hpMult = 1.5;
+            speedMult = 0.8;
+            this.color = '#00f2ff'; // Data Cyan
+            this.radius = 15;
+            this.reward = (10 + level) * 2;
+        } else {
+            this.color = '#ff0000'; // Virus Red
+            this.radius = 12;
+            this.reward = 10 + level;
+        }
+
+        this.speed = (1 + (level * 0.2)) * speedMult;
+        this.maxHealth = 40 * Math.pow(1.2, level - 1) * hpMult;
         this.health = this.maxHealth;
-        this.radius = isBoss ? 20 : 12;
-        this.reward = (10 + level) * (isBoss ? 5 : 1);
         this.dead = false;
         this.reachedEnd = false;
-
-        this.color = isBoss ? '#faff00' : '#ff0000'; // Toxic Yellow boss, Virus Red common
-        this.glowColor = isBoss ? 'rgba(250, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)';
+        this.glowColor = this.color + '80'; // 50% opacity
+        this.slowed = false;
     }
 
     update() {
         if (this.dead || this.reachedEnd) return;
 
         const dir = this.target.sub(this.pos).normalize();
-        this.pos = this.pos.add(dir.mult(this.speed));
+        const currentSpeed = this.slowed ? this.speed * 0.5 : this.speed;
+        this.pos = this.pos.add(dir.mult(currentSpeed));
 
         if (this.pos.dist(this.target) < this.speed) {
             this.gridPosIndex++;
@@ -39,6 +58,10 @@ export class Enemy {
                 this.reachedEnd = true;
             }
         }
+
+        // Reset slowed status at end of update. 
+        // Jammer towers will re-apply it in the next tower update cycle if enemy is still in range.
+        this.slowed = false;
     }
 
     setPath(newPath) {
@@ -79,6 +102,17 @@ export class Enemy {
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
             ctx.stroke();
+        }
+
+        if (this.slowed) {
+            // Visual indicator for being jammed/slowed
+            ctx.beginPath();
+            ctx.arc(this.pos.x, this.pos.y, this.radius + 2, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ffd700';
+            ctx.setLineDash([2, 4]);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
 
         // Health bar

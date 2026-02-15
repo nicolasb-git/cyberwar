@@ -37,6 +37,7 @@ class Game {
     this.gameSpeed = 1;
     this.gameOver = false;
     this.isPaused = false;
+    this.totalThreatsSpawned = 0;
 
     this.initAudio();
     this.initUI();
@@ -180,7 +181,7 @@ class Game {
       }
     }
 
-    const costs = { basic: 100, fast: 250, heavy: 500, firewall: 10 };
+    const costs = { basic: 100, fast: 250, heavy: 500, firewall: 10, jammer: 400 };
     const cost = costs[this.selectedTowerType];
 
     if (this.credits < cost) return;
@@ -269,15 +270,17 @@ class Game {
     let spawned = 0;
     const count = 5 + this.wave * 2;
     const interval = setInterval(() => {
-      this.enemies.push(new Enemy(this.currentPath, this.wave));
+      this.totalThreatsSpawned++;
+      const type = (this.totalThreatsSpawned % 10 === 0) ? 'resistant' : 'standard';
+      this.enemies.push(new Enemy(this.currentPath, this.wave, type));
       spawned++;
       if (spawned >= count) {
         clearInterval(interval);
 
         if (isBossWave) {
-          // Spawn one boss after the regular wave
+          // Spawn one boss after the regular wave (Bosses don't increment the 'every 10' rule)
           setTimeout(() => {
-            this.enemies.push(new Enemy(this.currentPath, this.wave, true));
+            this.enemies.push(new Enemy(this.currentPath, this.wave, 'boss'));
             this.playSFX(this.sfxDestroySrc);
             this.waveRunning = false;
           }, 2000);
@@ -285,7 +288,7 @@ class Game {
           this.waveRunning = false;
         }
       }
-    }, 1000);
+    }, 500);
   }
 
   updateUI() {
@@ -314,6 +317,7 @@ class Game {
     this.lives = 20;
     this.wave = 0;
     this.gameOver = false;
+    this.totalThreatsSpawned = 0;
     this.currentPath = findPath(this.start, this.end, this.grid, COLS, ROWS);
     this.updateUI();
     const overlay = document.getElementById('message-overlay');
@@ -480,7 +484,7 @@ class Game {
       this.ctx.fillRect(this.mouse.x * TILE_SIZE, this.mouse.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
       // Draw range of selected tower
-      const configs = { basic: 120, fast: 150, heavy: 200, firewall: 0 };
+      const configs = { basic: 120, fast: 150, heavy: 200, firewall: 0, jammer: 120 };
       const range = configs[this.selectedTowerType];
       this.ctx.beginPath();
       this.ctx.arc(this.mouse.x * TILE_SIZE + TILE_SIZE / 2, this.mouse.y * TILE_SIZE + TILE_SIZE / 2, range, 0, Math.PI * 2);
