@@ -188,8 +188,8 @@ class Game {
 
     if (this.selectedTowerType === 'ram_generator') {
       const ramCount = this.towers.filter(t => t.type === 'ram_generator').length;
-      if (ramCount >= 10) {
-        this.showMessage("RAM LIMIT REACHED (MAX 10)");
+      if (ramCount >= 5) {
+        this.showMessage("RAM LIMIT REACHED (MAX 5)");
         return;
       }
     }
@@ -318,7 +318,7 @@ class Game {
     const ramBtn = document.getElementById('btn-ram');
     if (ramBtn) {
       const ramCount = this.towers.filter(t => t.type === 'ram_generator').length;
-      if (ramCount >= 10) {
+      if (ramCount >= 5) {
         ramBtn.classList.add('disabled');
         // If it was selected, deselect it
         if (this.selectedTowerType === 'ram_generator') {
