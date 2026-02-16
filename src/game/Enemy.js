@@ -51,7 +51,7 @@ export class Enemy {
         if (this.dead || this.reachedEnd) return;
 
         const dir = this.target.sub(this.pos).normalize();
-        const currentSpeed = this.slowed ? this.speed * 0.3 : this.speed;
+        const currentSpeed = this.slowed ? this.speed * 0.5 : this.speed;
         this.pos = this.pos.add(dir.mult(currentSpeed));
 
         if (this.pos.dist(this.target) < this.speed) {

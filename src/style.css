@@ -240,7 +240,8 @@ body {
   animation-play-state: paused;
 }
 
-#name-input-overlay {
+#name-input-overlay,
+#game-over-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -249,7 +250,8 @@ body {
   pointer-events: auto;
 }
 
-#name-input-overlay.hidden {
+#name-input-overlay.hidden,
+#game-over-overlay.hidden {
   display: none;
 }
 

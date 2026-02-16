@@ -141,6 +141,20 @@ class Game {
         this.saveHighScore();
       });
     }
+
+    const restartBtn = document.getElementById('btn-restart');
+    if (restartBtn) {
+      restartBtn.addEventListener('click', () => {
+        this.reset();
+      });
+    }
+
+    const toSplashBtn = document.getElementById('btn-to-splash');
+    if (toSplashBtn) {
+      toSplashBtn.addEventListener('click', () => {
+        this.backToSplash();
+      });
+    }
   }
 
   startGame() {
@@ -191,11 +205,15 @@ class Game {
     document.getElementById('name-input-overlay').classList.add('hidden');
     this.renderLeaderboard();
 
-    this.showMessage("GAME OVER - CLICK TO RESTART", 0);
-    const overlay = document.getElementById('message-overlay');
-    overlay.onclick = () => {
-      this.reset();
-    };
+    document.getElementById('game-over-wave').textContent = this.wave;
+    document.getElementById('game-over-overlay').classList.remove('hidden');
+  }
+
+  backToSplash() {
+    this.reset();
+    this.started = false;
+    document.getElementById('splash-screen').classList.remove('hidden');
+    document.getElementById('ui-overlay').classList.remove('visible');
   }
 
   initAudio() {
@@ -308,7 +326,7 @@ class Game {
     } else if (tower.type === 'firewall') {
       stats = 'Passive Barrier';
     } else if (tower.type === 'jammer') {
-      stats = `Range: ${tower.range} | Slow: 70%`;
+      stats = `Range: ${tower.range} | Slow: 50%`;
     }
 
     document.getElementById('sel-tower-stats').textContent = stats;
@@ -427,6 +445,10 @@ class Game {
     if (overlay) {
       overlay.classList.add('hidden');
       overlay.onclick = null;
+    }
+    const gameOverOverlay = document.getElementById('game-over-overlay');
+    if (gameOverOverlay) {
+      gameOverOverlay.classList.add('hidden');
     }
   }
 
