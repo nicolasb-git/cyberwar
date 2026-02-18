@@ -436,9 +436,7 @@ class Game {
     const isBossWave = this.wave % 5 === 0;
     this.showMessage(isBossWave ? `BOSS WAVE ${this.wave}` : `WAVE ${this.wave}`);
 
-    let spawned = 0;
-    const count = 5 + this.wave * 2;
-    const interval = setInterval(() => {
+    const spawnOne = () => {
       this.totalThreatsSpawned++;
       let type = 'standard';
       if (this.totalThreatsSpawned % 20 === 0) {
@@ -448,11 +446,14 @@ class Game {
       }
       this.enemies.push(new Enemy(this.currentPath, this.wave, type));
       spawned++;
+    };
+
+    spawnOne(); // Spawn first enemy immediately
+
+    const interval = setInterval(() => {
       if (spawned >= count) {
         clearInterval(interval);
-
         if (isBossWave) {
-          // Spawn one boss after the regular wave (Bosses don't increment the 'every 10' rule)
           setTimeout(() => {
             this.enemies.push(new Enemy(this.currentPath, this.wave, 'boss'));
             this.playSFX(this.sfxDestroySrc);
@@ -461,7 +462,9 @@ class Game {
         } else {
           this.waveRunning = false;
         }
+        return;
       }
+      spawnOne();
     }, 500);
   }
 
