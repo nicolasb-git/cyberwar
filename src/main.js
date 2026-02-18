@@ -104,6 +104,11 @@ class Game {
       confirmSellBtn.addEventListener('click', () => this.sellTower());
     }
 
+    const upgradeBtn = document.getElementById('btn-upgrade');
+    if (upgradeBtn) {
+      upgradeBtn.addEventListener('click', () => this.upgradeTower());
+    }
+
     const closeSelBtn = document.getElementById('btn-close-sel');
     if (closeSelBtn) {
       closeSelBtn.addEventListener('click', () => this.deselectTower());
@@ -345,7 +350,7 @@ class Game {
 
   selectTower(tower) {
     this.selectedTower = tower;
-    document.getElementById('sel-tower-name').textContent = tower.name.toUpperCase();
+    document.getElementById('sel-tower-name').textContent = `${tower.name.toUpperCase()} (LVL ${tower.level})`;
 
     let stats = `Range: ${tower.range} | Damage: ${tower.damage}`;
     if (tower.type === 'ram_generator') {
@@ -358,7 +363,34 @@ class Game {
 
     document.getElementById('sel-tower-stats').textContent = stats;
     document.getElementById('sel-refund').textContent = `${Math.floor(tower.cost / 2)}MB`;
+
+    const upgradeBtn = document.getElementById('btn-upgrade');
+    if (tower.isUpgradable() && tower.level < 3) {
+      const upgradeCost = tower.getUpgradeCost();
+      upgradeBtn.classList.remove('hidden');
+      document.getElementById('upgrade-cost').textContent = upgradeCost;
+      if (this.credits < upgradeCost) {
+        upgradeBtn.classList.add('disabled');
+      } else {
+        upgradeBtn.classList.remove('disabled');
+      }
+    } else {
+      upgradeBtn.classList.add('hidden');
+    }
+
     document.getElementById('selection-overlay').classList.remove('hidden');
+  }
+
+  upgradeTower() {
+    if (!this.selectedTower) return;
+    const cost = this.selectedTower.getUpgradeCost();
+    if (this.credits >= cost) {
+      if (this.selectedTower.upgrade()) {
+        this.credits -= cost;
+        this.selectTower(this.selectedTower); // Refresh UI
+        this.updateUI();
+      }
+    }
   }
 
   deselectTower() {

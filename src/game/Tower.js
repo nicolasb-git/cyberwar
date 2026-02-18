@@ -44,6 +44,7 @@ export class Tower {
         this.gridY = gridY;
         this.pos = new Vector(gridX * 40 + 20, gridY * 40 + 20);
         this.type = type;
+        this.level = 1;
 
         const configs = {
             basic: { range: 120, damage: 5, cooldown: 30, cost: 100, color: '#00ff41', bulletSpeed: 10 },
@@ -57,6 +58,7 @@ export class Tower {
         const config = configs[type];
         this.range = config.range;
         this.damage = config.damage;
+        this.baseCost = config.cost; // Store base cost for upgrade calculations
         this.cost = config.cost;
         const names = {
             basic: 'Packet Filter',
@@ -71,6 +73,27 @@ export class Tower {
         this.cooldown = 0;
         this.color = config.color;
         this.bulletSpeed = config.bulletSpeed;
+    }
+
+    isUpgradable() {
+        const nonUpgradable = ['ram_generator', 'jammer', 'firewall'];
+        return !nonUpgradable.includes(this.type);
+    }
+
+    upgrade() {
+        if (!this.isUpgradable() || this.level >= 3) return false;
+
+        const cost = this.getUpgradeCost();
+        this.level++;
+        this.damage = Math.floor(this.damage * 1.5);
+        this.cost += cost; // Update total investment for selling purposes (optional, but good for refund logic)
+        return true;
+    }
+
+    getUpgradeCost() {
+        if (this.level === 1) return this.baseCost * 2;
+        if (this.level === 2) return (this.baseCost * 2) * 3;
+        return Infinity;
     }
 
     update(enemies, projectiles) {
@@ -184,6 +207,29 @@ export class Tower {
         ctx.arc(this.pos.x, this.pos.y, 5, 0, Math.PI * 2);
         ctx.fillStyle = '#fff';
         ctx.fill();
+
+        // Draw level mark
+        if (this.level > 1) {
+            ctx.shadowBlur = 0;
+            ctx.font = 'bold 10px Orbitron';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const markX = this.pos.x + 12;
+            const markY = this.pos.y - 12;
+
+            // Draw a small background circle for the level number
+            ctx.beginPath();
+            ctx.arc(markX, markY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fill();
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            ctx.fillText(this.level, markX, markY);
+        }
 
         ctx.restore();
     }

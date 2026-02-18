@@ -31,6 +31,10 @@ body {
   align-items: center;
 }
 
+.hidden {
+  display: none !important;
+}
+
 #splash-screen {
   position: fixed;
   top: 0;
@@ -658,6 +662,25 @@ body {
 .confirm-btn:hover {
   background: #fff;
   box-shadow: 0 0 20px var(--primary);
+}
+
+.upgrade-btn {
+  background: #bf00ff;
+  color: #fff;
+  font-weight: 700;
+}
+
+.upgrade-btn:hover {
+  background: #df44ff;
+  box-shadow: 0 0 20px #bf00ff;
+}
+
+.upgrade-btn.disabled {
+  background: #444;
+  color: #888;
+  pointer-events: none;
+  border-color: #555;
+  box-shadow: none;
 }
 
 .close-btn {
