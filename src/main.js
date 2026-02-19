@@ -44,6 +44,16 @@ class Game {
     this.initAudio();
     this.initUI();
     this.renderLeaderboard();
+
+    // Set dynamic versioning from Vite define
+    const versionEl = document.getElementById('version-tag-info');
+    if (versionEl) {
+      // @ts-ignore
+      const hash = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'LOCAL';
+      console.log("System Version Initialized:", hash);
+      versionEl.textContent = hash;
+    }
+
     this.animate();
   }
 
