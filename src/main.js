@@ -118,9 +118,7 @@ class Game {
     if (pauseBtn) {
       pauseBtn.addEventListener('click', () => {
         this.isPaused = !this.isPaused;
-        pauseBtn.classList.toggle('active', this.isPaused);
-        document.getElementById('pause-label').textContent = this.isPaused ? 'RESUME' : 'PAUSE';
-        document.getElementById('pause-icon').textContent = this.isPaused ? '▶' : '⏸';
+        this.updatePauseUI();
       });
     }
 
@@ -138,6 +136,21 @@ class Game {
       startBtn.addEventListener('click', () => {
         this.startGame();
       });
+    }
+
+    const splashManualBtn = document.getElementById('btn-splash-manual');
+    if (splashManualBtn) {
+      splashManualBtn.addEventListener('click', () => this.toggleManual(true));
+    }
+
+    const gameManualBtn = document.getElementById('btn-manual');
+    if (gameManualBtn) {
+      gameManualBtn.addEventListener('click', () => this.toggleManual(true));
+    }
+
+    const closeManualBtn = document.getElementById('btn-close-manual');
+    if (closeManualBtn) {
+      closeManualBtn.addEventListener('click', () => this.toggleManual(false));
     }
 
     const saveScoreBtn = document.getElementById('btn-save-score');
@@ -215,6 +228,28 @@ class Game {
     // Duplicate for infinite scroll if there are enough entries
     if (this.highScores.length > 3) {
       content.innerHTML += content.innerHTML;
+    }
+  }
+
+  toggleManual(show) {
+    const overlay = document.getElementById('manual-overlay');
+    if (show) {
+      overlay.classList.remove('hidden');
+      if (this.started && !this.gameOver) {
+        this.isPaused = true;
+        this.updatePauseUI();
+      }
+    } else {
+      overlay.classList.add('hidden');
+    }
+  }
+
+  updatePauseUI() {
+    const pauseBtn = document.getElementById('btn-pause');
+    if (pauseBtn) {
+      pauseBtn.classList.toggle('active', this.isPaused);
+      document.getElementById('pause-label').textContent = this.isPaused ? 'RESUME' : 'PAUSE';
+      document.getElementById('pause-icon').textContent = this.isPaused ? '▶' : '⏸';
     }
   }
 
@@ -527,12 +562,7 @@ class Game {
     this.wave = 0;
     this.gameOver = false;
     this.isPaused = false;
-    const pauseBtn = document.getElementById('btn-pause');
-    if (pauseBtn) {
-      pauseBtn.classList.remove('active');
-      document.getElementById('pause-label').textContent = 'PAUSE';
-      document.getElementById('pause-icon').textContent = '⏸';
-    }
+    this.updatePauseUI();
     this.totalThreatsSpawned = 0;
     this.currentPath = findPath(this.start, this.end, this.grid, COLS, ROWS);
     this.updateUI();

@@ -22,6 +22,7 @@
         <div class="loading-progress"></div>
       </div>
       <button id="start-btn">INITIALIZE SYSTEM</button>
+      <button id="btn-splash-manual" class="splash-secondary-btn">VIEW MANUAL</button>
       <div id="leaderboard">
         <h3>TOP OPERATIVES</h3>
         <div id="leaderboard-scroll">
@@ -62,6 +63,10 @@
           <div id="btn-quit" class="speed-btn quit-btn">
             <span class="speed-icon">⏻</span>
             <span class="label">QUIT</span>
+          </div>
+          <div id="btn-manual" class="speed-btn manual-btn">
+            <span class="speed-icon">📖</span>
+            <span class="label">MANUAL</span>
           </div>
         </div>
         <span class="speed-hint">L-Click: + | R-Click: -</span>
@@ -147,6 +152,46 @@
       </div>
     </div>
   </div>
+
+  <div id="manual-overlay" class="hidden">
+    <div class="manual-card scanlines">
+      <div class="manual-header">
+        <h2>SYSTEM OPERATIONAL MANUAL</h2>
+        <button id="btn-close-manual" class="close-btn">CLOSE</button>
+      </div>
+      <div class="manual-content">
+        <section>
+          <h3>🛡️ DEPLOYMENT PROTOCOLS</h3>
+          <p>Select a security module from the toolbar. Click an empty grid cell to deploy. Modules require <b>System
+              Memory (MB)</b> to initialize.</p>
+        </section>
+        <section>
+          <h3>🗺️ DYNAMIC MAZING</h3>
+          <p>Threats always take the shortest path. Deploy modules to obstruct and reroute them. <b>Note:</b>
+            Completely blocking the path is forbidden by system protocols.</p>
+        </section>
+        <section>
+          <h3>🛠️ UPGRADE & MAINTENANCE</h3>
+          <p>Click any active module to inspect it. <b>Combat Modules</b> (Packet Filter, Scan Decryptor, Logic Bomb)
+            can be upgraded twice for a 50% damage boost per level. Modules can be salvaged for a 50% refund.</p>
+        </section>
+        <section>
+          <h3>📟 RESOURCE MANAGEMENT</h3>
+          <p>Destroy threats to recover Memory. Deploy <b>RAM Generators</b> for passive income (Limited to 5 units).
+          </p>
+        </section>
+        <section>
+          <h3>⌨️ INTERFACE CONTROLS</h3>
+          <ul>
+            <li><b>⏩ SPEED:</b> Left-click to accelerate, Right-click to decelerate.</li>
+            <li><b>⏸ PAUSE:</b> Halts all system processes.</li>
+            <li><b>📖 MANUAL:</b> Access this guide (Auto-pauses game).</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 

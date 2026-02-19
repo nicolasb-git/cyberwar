@@ -693,3 +693,112 @@ body {
   background: rgba(255, 0, 0, 0.2);
   border-color: #ff007a !important;
 }
+
+/* Manual Overlay Styles */
+#manual-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  pointer-events: auto;
+}
+
+.manual-card {
+  background: #08081a;
+  border: 1px solid var(--primary);
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 50px rgba(0, 255, 65, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.manual-header {
+  padding: 2rem;
+  background: rgba(0, 255, 65, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.manual-header h2 {
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  color: var(--primary);
+  letter-spacing: 5px;
+}
+
+.manual-content {
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+.manual-content section h3 {
+  font-family: var(--font-header);
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin-bottom: 0.8rem;
+  letter-spacing: 2px;
+}
+
+.manual-content section p {
+  line-height: 1.6;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+.manual-content ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.manual-content li b {
+  color: var(--primary);
+}
+
+.splash-secondary-btn {
+  padding: 0.8rem 2rem;
+  font-family: var(--font-header);
+  font-size: 0.9rem;
+  background: var(--glass);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  opacity: 0;
+  animation: fadeIn 1s forwards 3.2s;
+}
+
+.splash-secondary-btn:hover {
+  background: rgba(0, 255, 65, 0.2);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.manual-btn:hover {
+  border-color: #00d2ff;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+}
+
+.manual-btn:hover .label,
+.manual-btn:hover .speed-icon {
+  color: #00d2ff;
+}
